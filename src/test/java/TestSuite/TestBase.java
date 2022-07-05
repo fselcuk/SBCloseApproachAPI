@@ -10,6 +10,8 @@ import org.testng.annotations.BeforeTest;
 import utilities.ConfigurationReader;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static io.restassured.RestAssured.baseURI;
 
@@ -24,11 +26,11 @@ public class TestBase {
     @BeforeTest
     public void setup() {
         baseURI = ConfigurationReader.get("ssdAPI_url");
-
+        String date = new SimpleDateFormat("hhmmss").format(new Date());
         //create reporting structure
         report = new ExtentReports();
         String projectPath = System.getProperty("user.dir");
-        String path = projectPath + "/test-output/report.html";
+        String path = projectPath + "/test-output/report"+date+".html";
         htmlReporter = new ExtentHtmlReporter(path);
         report.attachReporter(htmlReporter);
         htmlReporter.config().setReportName("Close Approach Objects API Test Suite");
@@ -42,7 +44,6 @@ public class TestBase {
         if (result.getStatus() == ITestResult.FAILURE) {
             //record the name of failed test case
             extentLogger.fail(result.getName());
-            //capture the exception and put inside the report
             extentLogger.fail(result.getThrowable());
         }
 
